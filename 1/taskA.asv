@@ -1,8 +1,7 @@
 % Task A
 % Train a GP with a squared exponential covariance function
 % Start the log hyper-parameters at hyp.cov = [-1 0]; hyp.lik = 0
-% Produce predictive plot with 95% error bounds
-
+% Produce predictive plot with 95% error 
 data = load('cw1a.mat'); % load data
 x = data.x;
 y = data.y;

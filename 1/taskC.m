@@ -1,13 +1,17 @@
+% Task C
+% Use periodicic covariance function.
+% Produce predictive plot with 95% error bounds
+
 data = load('cw1a.mat'); % load data
 x = data.x;
 y = data.y;
 
 mean_func = []; % empty - don't use mean function
-cov_func = @covPeriodic; % squared exponential covariance function
+cov_func = @covPeriodic; % periodic covariance function
 lik_func = @likGauss; % gaussian likelihood func
 
 %initial hyperparams
-cov = [1, 1, 0]; % initial covariance: 1) log length-scale, 2) log signal std-dev
+cov = [0, 0, 16]; % initial covariance: 1) log length-scale, 2) log period, 3) log signal st-dev
 lik = 0; % initial likelihood - log noise st dev
 hyp = struct('mean', [], 'cov', cov, 'lik', lik); % hyperparameter struct
 
