@@ -3,11 +3,11 @@ x = data.x;
 y = data.y;
 
 mean_func = []; % empty - don't use mean function
-cov_func = @covSEiso; % squared exponential covariance function
+cov_func = @covPeriodic; % squared exponential covariance function
 lik_func = @likGauss; % gaussian likelihood func
 
 %initial hyperparams
-cov = [-1, 0]; % initial covariance: 1) log length-scale, 2) log signal std-dev
+cov = [1, 1, 0]; % initial covariance: 1) log length-scale, 2) log signal std-dev
 lik = 0; % initial likelihood - log noise st dev
 hyp = struct('mean', [], 'cov', cov, 'lik', lik); % hyperparameter struct
 
@@ -15,7 +15,6 @@ hyp = struct('mean', [], 'cov', cov, 'lik', lik); % hyperparameter struct
 hyp_opt = minimize(hyp, @gp, -100, @infGaussLik, mean_func, cov_func, lik_func, x, y);
 
 disp(hyp_opt)
-
 
 xs = linspace(-4, 4, 750)'; % test data in range -3.5 to 3.5
                                % min(x) = -2.8966, max(x) = 2.5093
