@@ -2,6 +2,7 @@
 % Same as taskE1_2.m BUT
 % varying SECOND input
 
+rng(1)
 % Load data
 data = load('cw1e.mat');
 x = data.x;

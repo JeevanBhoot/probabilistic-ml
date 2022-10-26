@@ -4,6 +4,7 @@
 % Relevance Detemination (ARD) distance measure; {@covSum, {@covSEard, @covSEard}}.
 % Produce 3D predictive plot
 
+rng(1)
 % Load data
 data = load('cw1e.mat');
 x = data.x;

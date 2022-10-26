@@ -1,8 +1,7 @@
 % Task E
-% 2D (input) data
-% Model with single Squared Exponential covariance function with Automatic
-% Relevance Detemination (ARD) distance measure; covSEard.
-% Produce 2D plots with 95% confidence bands, varying FIRST input
+% sum of TWO Squared Exponential covariance functions
+% Produce 2D plots with 95% confidence bands, 
+% varying FIRST input
 
 rng(1)
 % Load data
@@ -11,14 +10,15 @@ x = data.x;
 y = data.y;
 a = 8; % Range for input test data
 N = 100; % Number of input test data samples
-xs = [linspace(-a, a, N)', zeros(N, 1)+5]; % Test data, varying first input, second held constant
+input2 = 0; % Constant value of input2 (x2)
+xs = [linspace(-a, a, N)', zeros(N, 1)+input2]; % Test data, varying first input, second held constant
 
 mean_func = []; % empty - don't use mean function
-cov_func = @covSEard; % squared exponential covariance function
+cov_func = {@covSum, {@covSEard, @covSEard}}; % sum of two squared exponential cov funcs
 lik_func = @likGauss; % gaussian likelihood func
 
 %initial hyperparams
-cov = 0.1*randn(3,1); % initial covariance: 1) log length-scale1, 2) log length-scale2, 3) log signal std-dev
+cov = 0.1*randn(6,1); % initial covariance: 1) log length-scale1, 2) log length-scale2, 3) log signal std-dev
 lik = 0; % initial likelihood - log noise st dev
 hyp = struct('mean', [], 'cov', cov, 'lik', lik); % hyperparameter struct
 
