@@ -6,11 +6,16 @@
 % Return marginal likelihood of each to compare both models.
 
 % Load data
-data = load('cw1e.mat');
-x = data.x[];
-y = data.y;
+xy_train = load("xy_train.mat").xy_train;
+xy_test = load("xy_test.mat").xy_test;
 
-N = 250; % Number of randomly initialised models to optimize
+x_train = xy_train(:, 1:2); % Split train into x and y
+y_train = xy_train(:, 3);
+
+x_test = xy_test(:, 1:2); % Split test into x and y
+y_test = xy_test(:, 3);
+
+N = 1000; % Number of randomly initialised models to optimize
 
 mean_func = []; % empty - don't use mean function
 cov_func1 = @covSEard; % squared exponential covariance function
@@ -25,23 +30,41 @@ for i = 1:N
     cov2 = 0.1*randn(6,1);
     hyp1 = struct('mean', [], 'cov', cov1, 'lik', 0);
     hyp2 = struct('mean', [], 'cov', cov2, 'lik', 0);
-    [nlZ, ~] = gp(hyp1, @infGaussLik, mean_func, cov_func1, lik_func, x, y);
+
+    [nlZ, ~] = gp(hyp1, @infGaussLik, mean_func, cov_func1, lik_func, x_train, y_train);
     model1_nlls(i) = nlZ;
-    [nlZ, ~] = gp(hyp2, @infGaussLik, mean_func, cov_func2, lik_func, x, y);
+    model1s(i) = hyp1;
+
+    [nlZ, ~] = gp(hyp2, @infGaussLik, mean_func, cov_func2, lik_func, x_train, y_train);
     model2_nlls(i) = nlZ;
+    model2s(i) = hyp2;
 end
 
-model1_best = min(model1_nlls);
-model2_best = min(model2_nlls);
+[model1_best_nll, i1] = min(model1_nlls);
+[model2_best_nll, i2] = min(model2_nlls);
 
+hyp1 = model1s(i1);
+hyp2 = model2s(i2);
 
-disp(model1_best)
-disp(exp(-model1_best))
+hyp1_opt = minimize(hyp1, @gp, -100, @infGaussLik, mean_func, cov_func1, lik_func, x_train, y_train);
+hyp2_opt = minimize(hyp2, @gp, -100, @infGaussLik, mean_func, cov_func2, lik_func, x_train, y_train);
 
-disp(model2_best)
-disp(exp(-model2_best))
+[mu_1, s2_1] = gp(hyp1_opt, @infGaussLik, mean_func, cov_func1, lik_func, x_train, y_train, x_test);
+[mu_2, s2_2] = gp(hyp2_opt, @infGaussLik, mean_func, cov_func2, lik_func, x_train, y_train, x_test);
 
-%disp("MODEL 1: Best Negative Log Marginal Likelihood = ", model1_best)
-    %"Best Marginal Likelihood = ", exp(-model1_best), "MODEL 2:", ...
-    %"Best Negative Log Marginal Likelihood = ", model2_best, ...
-    %"Best Marginal Likelihood = ", exp(-model2_best))
+disp(model1_best_nll)
+%disp(exp(-model1_best_nll))
+disp(model2_best_nll)
+%disp(exp(-model2_best_nll))
+
+error1 = mu_1 - y_test;
+error1 = error1.^2;
+error2 = mu_2 - y_test;
+error2 = error2.^2;
+
+disp(sqrt(sum(error1)/length(y_test)))
+disp(sqrt(sum(error2)/length(y_test)))
+
+disp(rmse(mu_1, y_test)) % Mean squared error
+disp(rmse(mu_2, y_test))
+
