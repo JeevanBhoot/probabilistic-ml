@@ -11,13 +11,16 @@ cov_func = @covPeriodic; % periodic covariance function
 lik_func = @likGauss; % gaussian likelihood func
 
 %initial hyperparams
-cov = [0, 0, 16]; % initial covariance: 1) log length-scale, 2) log period, 3) log signal st-dev
+cov = [0, 0, 0]; % initial covariance: 1) log length-scale, 2) log period, 3) log signal st-dev
 lik = 0; % initial likelihood - log noise st dev
 hyp = struct('mean', [], 'cov', cov, 'lik', lik); % hyperparameter struct
 
 % optimised hyperparams by minimising negative log likelihood
+[nlZ, ~] = gp(hyp, @infGaussLik, mean_func, cov_func, lik_func, x, y);
 hyp_opt = minimize(hyp, @gp, -100, @infGaussLik, mean_func, cov_func, lik_func, x, y);
-
+[nlZ2, ~] = gp(hyp_opt, @infGaussLik, mean_func, cov_func, lik_func, x, y);
+disp(nlZ)
+disp(nlZ2)
 disp(hyp_opt)
 
 xs = linspace(-4, 4, 750)'; % test data in range -3.5 to 3.5
