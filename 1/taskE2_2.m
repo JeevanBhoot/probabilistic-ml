@@ -10,7 +10,7 @@ x = data.x;
 y = data.y;
 a = 8; % Range for input test data
 N = 100; % Number of input test data samples
-input2 = 0; % Constant value of input2 (x2)
+input2 = 5; % Constant value of input2 (x2)
 xs = [linspace(-a, a, N)', zeros(N, 1)+input2]; % Test data, varying first input, second held constant
 
 mean_func = []; % empty - don't use mean function

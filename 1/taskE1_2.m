@@ -11,7 +11,8 @@ x = data.x;
 y = data.y;
 a = 8; % Range for input test data
 N = 100; % Number of input test data samples
-xs = [linspace(-a, a, N)', zeros(N, 1)+5]; % Test data, varying first input, second held constant
+input2 = 5;
+xs = [linspace(-a, a, N)', zeros(N, 1)+input2]; % Test data, varying first input, second held constant
 
 mean_func = []; % empty - don't use mean function
 cov_func = @covSEard; % squared exponential covariance function

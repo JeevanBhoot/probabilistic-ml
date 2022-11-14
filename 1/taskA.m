@@ -15,10 +15,10 @@ lik_func = @likGauss; % gaussian likelihood func
 cov = [-1, -10]; % initial covariance: 1) log length-scale, 2) log signal std-dev
 lik = 0; % initial likelihood - log noise st dev
 hyp = struct('mean', [], 'cov', cov, 'lik', lik); % hyperparameter struct
-[nlZ, ~] = gp(hyp, @infGaussLik, mean_func, cov_func, lik_func, x, y);
+[nlZ, ~] = gp(hyp, @infGaussLik, mean_func, cov_func, lik_func, x, y); % initial NLML
 % optimised hyperparams by minimising negative log likelihood
 hyp_opt = minimize(hyp, @gp, -100, @infGaussLik, mean_func, cov_func, lik_func, x, y);
-[nlZ2, ~] = gp(hyp_opt, @infGaussLik, mean_func, cov_func, lik_func, x, y);
+[nlZ2, ~] = gp(hyp_opt, @infGaussLik, mean_func, cov_func, lik_func, x, y); % optimised NLML
 disp(nlZ)
 disp(nlZ2)
 disp(hyp_opt)

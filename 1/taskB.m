@@ -15,7 +15,6 @@ lik_func = @likGauss; % gaussian likelihood func
 %initial hyperparams
 N = 20; % number of hyperparams to test
 cov_vals = linspace(-5, 5, N); % range of values for covariance hyperparams
-lik = 0; % initial likelihood - log noise st dev
 grid = zeros(N, N);
 
 for i = 1:N
