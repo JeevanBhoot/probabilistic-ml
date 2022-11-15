@@ -23,9 +23,9 @@ y_per = chol(K_per)' * x;
 y_iso = chol(K_iso)' * x;
 
 hold on;
-plot(xs, y, 'DisplayName', "Product", 'LineWidth', 1)
-plot(xs, y_per, 'r', 'DisplayName', "Periodic", 'LineWidth', 1)
-plot(xs, y_iso, 'g', 'DisplayName', "Squared Exponential", 'LineWidth', 1)
+plot(xs, y, 'DisplayName', "Product")
+plot(xs, y_per, 'r', 'DisplayName', "Periodic")
+plot(xs, y_iso, 'g', 'DisplayName', "Squared Exponential")
 Lgnd = legend('show');
 
 
