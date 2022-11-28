@@ -2,11 +2,8 @@ from sampleDiscrete import sampleDiscrete
 import scipy.io as sio
 import numpy as np
 
-
-def BMM(A, B, K, alpha, gamma):
-
+def BMM(A, B, K, alpha, gamma, num_iters_gibbs=10):
     """
-
     :param A: Training data [D, 3]
     :param B: Test Data [D, 3]
     :param K: number of mixture components
@@ -32,8 +29,8 @@ def BMM(A, B, K, alpha, gamma):
 
     sk_words = np.sum(swk, axis=0)  # number of words assigned to mixture k over all docs
 
-    num_iters_gibbs = 10
     # Perform Gibbs sampling through all documents and words
+    mix_prop_evols = np.zeros((num_iters_gibbs, K))
     for iter in range(num_iters_gibbs):
         for d in range(D):
 
@@ -59,7 +56,10 @@ def BMM(A, B, K, alpha, gamma):
             sk_docs[kk] += 1
             sk_words[kk] += np.sum(c)
             sd[d] = kk
-
+        mix_prop_evols[iter, :] = [(alpha + sk_docs[i]) / (alpha*K + np.sum(sk_docs)) for i in range(K)]
+    diff_mix_prop_evols = np.zeros((num_iters_gibbs - 1, K))
+    for i in range(num_iters_gibbs - 1):
+        diff_mix_prop_evols[i, :] = np.abs(mix_prop_evols[i + 1, :] - mix_prop_evols[i, :])
     # test documents
     lp = 0
     nd = 0
@@ -77,7 +77,7 @@ def BMM(A, B, K, alpha, gamma):
 
     perplexity = np.exp(-lp/nd)  # perplexity
 
-    return perplexity, swk
+    return perplexity, swk, mix_prop_evols, diff_mix_prop_evols
 
 if __name__ == '__main__':
     np.random.seed(1)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     K = 20  # number of clusters
     alpha = 10  # parameter of the Dirichlet over mixture components
     gamma = .1  # parameter of the Dirichlet over words
-    perplexity, swk = BMM(A, B, K, alpha, gamma)
+    perplexity, swk = BMM(A, B, K, alpha, gamma, num_iters_gibbs=1)
     print(perplexity)
     I = 20
     indices = np.argsort(-swk, axis=0)
